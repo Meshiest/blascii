@@ -61,7 +61,7 @@
           for(var i in data) {
             var item = data[i];
             list.append($('<li class="listelement"/>')
-              .html("<a href='/ascii/"+item['id']+"'>"+item['url']+"</a> - "+item['state']));
+              .html("<img style='width:50px;' src='"+item['url']+"'></img><a href='/ascii/"+item['id']+"'>"+item['url']+"</a> - "+item['state']));
           }
         }
       });
