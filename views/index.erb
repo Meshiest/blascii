@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Blockland Ascii Generator</title>
+    <style>
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: #EEE;
+      }
+      #content {
+        width: 50%;
+        margin: 1em auto;
+        background: #FFF;
+        padding: 1em;
+      }
+      #list {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .listelement {
+        background: #FFF;
+        margin: 0;
+        padding: 0.25em;
+      }
+      .listelement:nth-child(odd){
+        background: #EEE;
+      }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+  </head>
+  <body>
+
+    <div id='content'>
+      <h3>Ascii List</h3>
+      <p>This is a list of generated ascii</p>
+      <form action='javascript:submitimage()'>
+        <input type='text' id='url'></input>
+      </form>
+      <h3>List</h3>
+      <ul id='list'>
+      </ul>
+    </div>
+
+    <script>
+      function submitimage() {
+        var url = $('#url').val();
+        window.location.href = "/generate?url="+url;
+      }
+
+      var list = $('#list')
+      var listData = []
+      $.getJSON('/listdata', function(data, err){
+        if(err != 'success') {
+          list.append($('<li/>').text("There was an error getting data"));
+        } else {
+          listData = data;
+          for(var i in data) {
+            var item = data[i];
+            list.append($('<li class="listelement"/>')
+              .html("<a href='/ascii/"+item['id']+"'>"+item['url']+"</a> - "+item['state']));
+          }
+        }
+      });
+    </script>
+
+  </body>
+
+
+</html>
