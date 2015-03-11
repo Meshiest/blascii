@@ -1,8 +1,10 @@
 require 'rubygems'
+require 'RMagick'
 require 'sinatra'
 require 'chunky_png'
 require 'open-uri'
 require 'json'
+require 'chunky_png/rmagick'
 
 include ChunkyPNG
 
@@ -18,7 +20,12 @@ def handleImage item
     puts "[#{item[:id]}] Starting"
 
     item[:progress] = 'fetching image'
-    imageData = open(item[:url]).read
+    begin
+      imageData = open(item[:url]).read
+    rescue
+      item[:progress] = 'failed; couldn\'t download'
+      return
+    end
     puts "[#{item[:id]}] Retrieved Image"
     if imageData.length == 0
       puts "[#{item[:id]}] Failed - Bad image"
@@ -33,6 +40,13 @@ def handleImage item
       img = Image.from_file('temp'+item[:id].to_s+'.png')
     rescue
       item[:progress] = 'failed; couldn\'t load'
+      return
+    end
+    begin
+      rmagicimg = ChunkyPNG::RMagick.export(img)
+      img = ChunkyPNG::RMagick.import(rmagicimg.quantize($chars.length))
+    rescue
+      item[:progress] = 'failed; couldn\'t quantize colors'
       return
     end
     item[:progress] = 'processing image'
@@ -90,7 +104,7 @@ def handleImage item
     item[:data] = item[:data] + "\n"
     item[:progress] = 'generated'
     item[:downloadable] = true
-    
+
   rescue
     item[:progress] = 'failed; error ' + $!.backtrace
   end
