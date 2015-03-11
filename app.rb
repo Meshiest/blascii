@@ -44,7 +44,7 @@ def handleImage item
     end
     begin
       rmagicimg = ChunkyPNG::RMagick.export(img)
-      img = ChunkyPNG::RMagick.import(rmagicimg.quantize($chars.length))
+      img = ChunkyPNG::RMagick.import(rmagicimg.quantize($chars.length-3))
     rescue
       item[:progress] = 'failed; couldn\'t quantize colors'
       return
